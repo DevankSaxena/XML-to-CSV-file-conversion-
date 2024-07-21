@@ -1,18 +1,33 @@
-import pandas as pd
+import csv
 import os
 
-def split_csv_by_measinfoid(input_csv, output_dir):
-    df = pd.read_csv(input_csv)
-    measinfoids = df['measInfoId'].unique()
+input_csv = 'measData.csv'
+output_dir = 'output_csvs'
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+# Ensure the output directory exists
+os.makedirs(output_dir, exist_ok=True)
 
-    for measinfoid in measinfoids:
-        subset_df = df[df['measInfoId'] == measinfoid]
-        subset_df.to_csv(f"{output_dir}/measinfoid_{measinfoid}.csv", index=False)
+# Read the input CSV file
+with open(input_csv, mode='r') as file:
+    reader = csv.DictReader(file)
+    rows = list(reader)
+    header = reader.fieldnames
 
+# Group rows by measInfoId
+grouped_rows = {}
+for row in rows:
+    meas_info_id = row['measInfoId']
+    if meas_info_id not in grouped_rows:
+        grouped_rows[meas_info_id] = []
+    grouped_rows[meas_info_id].append(row)
 
-input_csv = "parsed_flattened.csv"
-output_dir = "split_csv_files"
-split_csv_by_measinfoid(input_csv, output_dir)
+# Write each group to a separate CSV file
+for meas_info_id, group in grouped_rows.items():
+    output_csv = os.path.join(output_dir, f'measData_{meas_info_id}.csv')
+    with open(output_csv, mode='w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(group)
+    print(f'Data has been written to {output_csv}')
+
+print('All files have been split and saved.')
