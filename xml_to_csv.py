@@ -6,6 +6,9 @@ def xml_to_csv(xml_file, output_csv):
     tree = ET.parse(xml_file)
     root = tree.getroot()
 
+    # Debug: Print root tag
+    print(f"Root tag: {root.tag}")
+
     # Extracting file header information
     file_header = root.find('ns:fileHeader', namespaces)
     if file_header is not None:
@@ -14,9 +17,11 @@ def xml_to_csv(xml_file, output_csv):
     else:
         file_format_version = ''
         vendor_name = ''
+    print(f"File Header - Version: {file_format_version}, Vendor: {vendor_name}")
 
     file_sender_elem = root.find('ns:fileSender', namespaces)
     file_sender = file_sender_elem.get('elementType', '') if file_sender_elem is not None else ''
+    print(f"File Sender: {file_sender}")
 
     meas_collec_elem = root.find('ns:measCollec', namespaces)
     if meas_collec_elem is not None:
@@ -25,15 +30,19 @@ def xml_to_csv(xml_file, output_csv):
     else:
         begin_time = ''
         end_time = ''
+    print(f"Meas Collec - Begin Time: {begin_time}, End Time: {end_time}")
 
     rows = []
 
     for meas_data in root.findall('ns:measData', namespaces):
         user_label_elem = meas_data.find('ns:managedElement', namespaces)
         user_label = user_label_elem.get('userLabel', '') if user_label_elem is not None else ''
-        
+        print(f"Managed Element - User Label: {user_label}")
+
         for meas_info in meas_data.findall('ns:measInfo', namespaces):
             meas_info_id = meas_info.get('measInfoId', '')
+            print(f"Meas Info ID: {meas_info_id}")
+
             gran_period = meas_info.find('ns:granPeriod', namespaces)
             if gran_period is not None:
                 duration = gran_period.get('duration', '')
@@ -41,14 +50,17 @@ def xml_to_csv(xml_file, output_csv):
             else:
                 duration = ''
                 end_time = ''
-            
+            print(f"Gran Period - Duration: {duration}, End Time: {end_time}")
+
             meas_types_elem = meas_info.find('ns:measTypes', namespaces)
             meas_types = meas_types_elem.text.split() if meas_types_elem is not None else []
-            
+            print(f"Meas Types: {meas_types}")
+
             for meas_value in meas_info.findall('ns:measValue', namespaces):
                 meas_obj_ldn = meas_value.get('measObjLdn', '')
                 meas_results_elem = meas_value.find('ns:measResults', namespaces)
                 meas_results = meas_results_elem.text.split() if meas_results_elem is not None else []
+                print(f"Meas Value - Obj Ldn: {meas_obj_ldn}, Results: {meas_results}")
 
                 row = [
                     vendor_name,
@@ -71,11 +83,3 @@ def xml_to_csv(xml_file, output_csv):
         'beginTime', 'endTime', 'duration', 'userLabel', 'measInfoId', 
         'measObjLdn', 'measTypes', 'measResults'
     ]
-    
-    df = pd.DataFrame(rows, columns=columns)
-    df.to_csv(output_csv, index=False)
-
-# Usage
-xml_file = "/mnt/data/A20200314.1200+0200-1230+0200_MBTS_06330_VO_BBU0_IERAPETRA_NORTH.xml"
-output_csv = "/mnt/data/parsed_flattened.csv"
-xml_to_csv(xml_file, output_csv)
