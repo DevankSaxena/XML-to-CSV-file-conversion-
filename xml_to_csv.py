@@ -83,3 +83,12 @@ def xml_to_csv(xml_file, output_csv):
         'beginTime', 'endTime', 'duration', 'userLabel', 'measInfoId', 
         'measObjLdn', 'measTypes', 'measResults'
     ]
+    
+    df = pd.DataFrame(rows, columns=columns)
+    df.to_csv(output_csv, index=False)
+    print(f"Data has been written to {output_csv}")
+
+# Usage
+xml_file = "/mnt/data/A20200314.1200+0200-1230+0200_MBTS_06330_VO_BBU0_IERAPETRA_NORTH.xml"
+output_csv = "/mnt/data/parsed_flattened.csv"
+xml_to_csv(xml_file, output_csv)
