@@ -54,6 +54,6 @@ def xml_to_csv(xml_file, output_csv):
     df.to_csv(output_csv, index=False)
 
 # Usage
-xml_file = "/mnt/data/A20200314.1200+0200-1230+0200_MBTS_06330_VO_BBU0_IERAPETRA_NORTH.xml"
-output_csv = "/mnt/data/parsed_flattened.csv"
+xml_file = "A20200314.1200+0200-1230+0200_MBTS_06330_VO_BBU0_IERAPETRA_NORTH.xml"
+output_csv = "parsed_flattened.csv"
 xml_to_csv(xml_file, output_csv)
