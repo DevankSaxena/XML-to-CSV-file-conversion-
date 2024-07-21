@@ -12,7 +12,7 @@ def split_csv_by_measinfoid(input_csv, output_dir):
         subset_df = df[df['measInfoId'] == measinfoid]
         subset_df.to_csv(f"{output_dir}/measinfoid_{measinfoid}.csv", index=False)
 
-# Usage
-input_csv = "/mnt/data/parsed_flattened.csv"
-output_dir = "/mnt/data/split_csv_files"
+
+input_csv = "parsed_flattened.csv"
+output_dir = "split_csv_files"
 split_csv_by_measinfoid(input_csv, output_dir)
