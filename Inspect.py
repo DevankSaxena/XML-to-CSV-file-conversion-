@@ -3,13 +3,13 @@ import xml.etree.ElementTree as ET
 def inspect_xml_structure(xml_file):
     tree = ET.parse(xml_file)
     root = tree.getroot()
-    
+
     def recurse_tree(element, level=0):
         indent = "  " * level
         print(f"{indent}Tag: {element.tag}, Attributes: {element.attrib}")
         for child in element:
             recurse_tree(child, level + 1)
-    
+
     print(f"Root tag: {root.tag}")
     recurse_tree(root)
 
